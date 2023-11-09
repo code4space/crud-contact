@@ -1,0 +1,1 @@
+export const CONTACT = 'success_get/contact_info'
