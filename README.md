@@ -9,7 +9,7 @@ User dapat menambah, mengedit, mengupdate, dan delete
 ## Deployed link
 
 ```
-Employee : https://layana-test.vercel.app/
+Link: https://crud-contact-two.vercel.app/
 ```
 
 &nbsp;
@@ -31,10 +31,18 @@ Next.js is an open-source web development framework created by the private compa
 Siapkan folder project, lalu buka address folder tersebut di terminal dan lakukan command dibawah ini
 
 ```
-$ git clone https://github.com/code4space/Layana-test.git
-$ cd Layana-test/karyawan-client
+$ git clone https://github.com/code4space/crud-contact.git
+$ cd crud-contact
 $ npm install
 $ npm run dev
+```
+
+## Untuk testing
+
+Siapkan folder project, lalu buka address folder tersebut di terminal dan lakukan command dibawah ini
+
+```
+$ npm run test
 ```
 
 _Disarankan menginstall [Git Bash](https://git-scm.com/downloads) terlebih dahulu_

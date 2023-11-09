@@ -80,7 +80,7 @@ export default function Home() {
     });
 
     fetch();
-  }, [dispatch]);
+  }, [dispatch, data]);
 
   function cardClass() {
     let className = 'card-detail'
