@@ -16,14 +16,23 @@ export default function ModalInput({ modal, setModal, fetch }: any) {
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
         if (modal.type === 'add') {
+            console.log('masuk');
+            console.log(data);
+
             await axios({
                 method: 'POST',
                 url: baseUrl,
-                data: data
-            })
-            fetch()
-            swalTopEnd('Success add contact')
-            setModal((prevState: any) => ({ ...prevState, isOpen: false }))
+                data: {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    age: data.age,
+                    photo: data.photo,
+                }
+            }).then(() => {
+                fetch()
+                swalTopEnd('Success add contact')
+                setModal((prevState: any) => ({ ...prevState, isOpen: false }))
+            }).catch(err => swalError(err))
         } else if (modal.type === 'edit') {
             axios({
                 method: 'PUT',
