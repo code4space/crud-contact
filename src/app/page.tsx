@@ -1,9 +1,8 @@
 "use client"
 import SearchIcon from '@mui/icons-material/Search';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormEvent, MutableRefObject, useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getContact } from '@/store/actions/fetchContact';
-import { ContactState } from '@/store/reducers/contact';
 import Loading from '@/components/loading';
 import VanillaTilt from 'vanilla-tilt';
 import NeonButton from '@/components/neonButton';
@@ -50,7 +49,6 @@ const ImageChecker: React.FC<{ imageUrl: string }> = ({ imageUrl }) => {
 export default function Home() {
   const dispatch = useDispatch()
   const data: Contact[] = useSelector((state: { ContactReducer: { contact: Contact[] } }) => state.ContactReducer.contact);
-  const [contact, setContact] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
   const [flip, setFlip] = useState(false)
   const [card, setCard] = useState({ isActive: false, index: 0 })
@@ -65,7 +63,6 @@ export default function Home() {
     setLoading(true);
     dispatch(getContact())
       .then(() => {
-        setContact(data); // Update the contact state after fetching data
         setLoading(false);
       });
   }
@@ -79,8 +76,9 @@ export default function Home() {
       gyroscope: false,
     });
 
-    fetch();
-  }, [dispatch, data]);
+    setLoading(true);
+    fetch()
+  }, [dispatch]);
 
   function cardClass() {
     let className = 'card-detail'
@@ -94,7 +92,7 @@ export default function Home() {
   }
 
   function editContact(index: number) {
-    setModalInp({ isOpen: true, type: 'edit', value: { ...contact[index] } })
+    setModalInp({ isOpen: true, type: 'edit', value: { ...filteredContacts[index] } })
   }
 
   function deleteContact(id: string) {
@@ -122,18 +120,18 @@ export default function Home() {
     });
   }
 
-  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const searchTerm = e.target.value.toLowerCase();
-
-    const filteredContacts = data.filter((el: any) => {
+  const filteredContacts = useMemo(() => {
+    const searchTerm = search.toLowerCase();
+    return data.filter((el: any) => {
       const fullName = `${el.firstName} ${el.lastName}`.toLowerCase();
       return fullName.includes(searchTerm);
     });
+  }, [data, search]);
 
-    setContact(filteredContacts);
-    console.log(filteredContacts);
-    
-    setSearch(e.target.value);
+  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const searchTerm = e.target.value.toLowerCase();
+
+    setSearch(searchTerm);
   }
 
   if (loading) return <Loading />
@@ -160,7 +158,7 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            {contact && contact.map((el: any, i: number) => {
+            {filteredContacts && filteredContacts.map((el: any, i: number) => {
               return (
                 <tr key={i}>
                   <td>{el.firstName}</td>
@@ -191,20 +189,20 @@ export default function Home() {
                   <>
                     <div className="opt">
                       <span onClick={() => editContact(card.index)}>edit</span>
-                      <span onClick={() => deleteContact(contact[card.index].id)}>delete</span>
+                      <span onClick={() => deleteContact(filteredContacts[card.index].id)}>delete</span>
                     </div>
                   </>
                 }
                 <div className="card-img">
-                  <ImageChecker imageUrl={contact[card.index].photo} />
+                  <ImageChecker imageUrl={filteredContacts[card.index].photo} />
                 </div>
-                <h3>{contact[card.index].firstName} {contact[card.index].lastName}</h3>
-                <span>{contact[card.index].age}</span>
+                <h3>{filteredContacts[card.index].firstName} {filteredContacts[card.index].lastName}</h3>
+                <span>{filteredContacts[card.index].age}</span>
                 <button onClick={() => setFlip(!flip)}>flip me</button>
                 <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam doloribus laudantium ducimus illum voluptatem! Ut in eum quia officiis at.</p>
               </div>
               <div className="back-card">
-                <ImageChecker imageUrl={contact[card.index].photo} />
+                <ImageChecker imageUrl={filteredContacts[card.index].photo} />
                 <button onClick={() => setFlip(!flip)}>flip me</button>
               </div>
             </div>
